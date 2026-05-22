@@ -21,7 +21,7 @@ SETS = [
         "name": "Baseline Any Project",
         "best_for": "Any code repository that needs concise always-on Codex rules.",
         "maturity": ["prototype", "active product", "legacy"],
-        "biases": ["clarity", "local conventions", "safe edits", "verification"],
+        "biases": ["clarity", "local conventions", "module slicing", "safe edits", "verification"],
         "items": [
             {
                 "layer": "project-baseline",
@@ -47,7 +47,7 @@ SETS = [
                 "source": "openai-codex/codex-rs/collaboration-mode-templates/templates/plan.md",
                 "mode": "adapt",
                 "required": False,
-                "why": "Adds a reusable plan workflow: inspect first, ask only for real tradeoffs, produce decision-complete plans.",
+                "why": "Adds a reusable plan workflow: inspect first, ask only for real tradeoffs, split non-trivial work into modules/layers, and produce decision-complete plans.",
                 "load": "Skill metadata appears in project context; body loads when `$project-planning` is invoked.",
             },
         ],
@@ -57,7 +57,7 @@ SETS = [
         "name": "Production Full-Stack Product",
         "best_for": "Web apps with frontend, backend/API, tests, CI, and product-facing behavior.",
         "maturity": ["active product", "production-critical"],
-        "biases": ["correctness", "tests", "schema/docs sync", "review", "security"],
+        "biases": ["correctness", "module gates", "tests", "schema/docs sync", "review", "security"],
         "items": [
             {
                 "layer": "project-baseline",
@@ -102,7 +102,7 @@ SETS = [
         "name": "Frontend UI / UX Project",
         "best_for": "React/Vue/Next/browser UI projects, dashboards, design systems, or visual QA-heavy work.",
         "maturity": ["prototype", "active product", "production-critical"],
-        "biases": ["UI quality", "accessibility", "visual verification", "performance"],
+        "biases": ["UI quality", "layered UI delivery", "accessibility", "visual verification", "performance"],
         "items": [
             {
                 "layer": "project-baseline",
@@ -138,7 +138,7 @@ SETS = [
         "name": "Backend API / Service",
         "best_for": "APIs, services, SDKs, protocol work, database-backed backends, and MCP servers.",
         "maturity": ["active product", "production-critical", "legacy"],
-        "biases": ["API stability", "contracts", "security", "observability", "tests"],
+        "biases": ["API stability", "contracts", "module tests", "security", "observability", "tests"],
         "items": [
             {
                 "layer": "project-baseline",
@@ -174,7 +174,7 @@ SETS = [
         "name": "Legacy Refactor / Architecture Cleanup",
         "best_for": "Existing codebases with coupling, unclear boundaries, large files, or risky incremental refactors.",
         "maturity": ["legacy", "active product", "review-only"],
-        "biases": ["architecture", "incremental safety", "tests", "evidence-based planning"],
+        "biases": ["architecture", "module slicing", "incremental safety", "tests", "evidence-based planning"],
         "items": [
             {
                 "layer": "planning-skill",
@@ -210,7 +210,7 @@ SETS = [
         "name": "Multi-Agent Review / Parallel Work",
         "best_for": "Large PRs, architecture reviews, security reviews, or parallel exploration and implementation.",
         "maturity": ["active product", "production-critical", "review-only"],
-        "biases": ["subagents", "parallel analysis", "role clarity", "review rigor"],
+        "biases": ["subagents", "module ownership", "parallel analysis", "role clarity", "review rigor"],
         "items": [
             {
                 "layer": "custom-agents",
@@ -246,7 +246,7 @@ SETS = [
         "name": "Agent Skill Library Project",
         "best_for": "Repos that themselves define AGENTS.md, SKILL.md, Claude/Codex rules, commands, plugins, or agent packs.",
         "maturity": ["prototype", "active product", "production-critical"],
-        "biases": ["metadata quality", "discoverability", "progressive disclosure", "cross-tool compatibility"],
+        "biases": ["metadata quality", "workflow constraints", "discoverability", "progressive disclosure", "cross-tool compatibility"],
         "items": [
             {
                 "layer": "project-baseline",
@@ -324,10 +324,11 @@ def write_outputs(index: dict) -> None:
         "## Selection Flow",
         "",
         "1. Inspect the project first: language, framework, tests, CI, docs, existing agent files.",
-        "2. Ask only for project direction, maturity, and priority biases that cannot be inferred.",
-        "3. Pick one primary set and at most two optional add-ons.",
-        "4. Recommend destinations and loading behavior before writing files.",
-        "5. Install only after explicit user confirmation.",
+        "2. Ask only for project direction, maturity, module/layer boundaries, and priority biases that cannot be inferred.",
+        "3. For non-trivial app/code work, summarize the whole task and split it into independently testable modules or layers.",
+        "4. Pick one primary set and at most two optional add-ons.",
+        "5. Recommend destinations and loading behavior before writing files.",
+        "6. Install only after explicit user confirmation.",
         "",
         "## Sets",
         "",
@@ -372,6 +373,8 @@ def write_outputs(index: dict) -> None:
             "- Distill sources into project-specific files; do not copy large files blindly.",
             "- Keep the root `AGENTS.md` short, preferably under 150 lines.",
             "- Prefer a coherent set over isolated snippets.",
+            "- For non-trivial development, require module/layer delivery: build one module at a time, run its module gate, then move to the next.",
+            "- Do final integration only after all planned modules/layers pass their local gates, then verify contracts, data flow, user flow, docs, and residual risk.",
             "- Treat high-star discovered repos as candidates, not automatically trusted rules.",
             "- Verify with `codex debug prompt-input ''` from the project root after installation.",
         ]

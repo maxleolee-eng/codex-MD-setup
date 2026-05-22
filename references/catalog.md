@@ -49,6 +49,9 @@ Use this catalog to choose source material from
 - Backend/API: API schema/docs sync, migration rules, integration tests,
   security and observability checks.
 - Multi-agent work: custom explorer/reviewer/worker agents with narrow scopes.
+- Non-trivial application/code work: include a module/layer breakdown before
+  implementation, give each module its own test/proof gate, and add a final
+  integration phase only after module gates pass.
 
 ## Dynamic Loading Policy
 
@@ -59,5 +62,8 @@ Do not assume arbitrary copied MD files are auto-loaded. Make loading explicit:
 - Put large references in `docs/agent-context/` and link them from
   `AGENTS.md` with trigger conditions, for example:
   "For API changes, read `docs/agent-context/api-review.md` before editing."
+- Put whole-task module maps and per-module delivery cadence in a planning
+  skill or short `AGENTS.md` workflow rule; keep detailed architecture notes in
+  `docs/agent-context/` if they are too large for the root rules.
 - After installation, verify startup visibility with:
   `codex debug prompt-input ''`.

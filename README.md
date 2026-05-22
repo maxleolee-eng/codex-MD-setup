@@ -14,12 +14,14 @@ It is meant for moments like:
 ## What It Does
 
 1. Asks a short setup dialogue about project direction, maturity, and priorities.
-2. Recommends one coherent MD kit instead of isolated prompt snippets.
-3. Installs selected files only after confirmation.
-4. Pulls high-signal Codex and Claude Code MD repositories from GitHub into a
+2. Confirms the full application or coding goal, then breaks it into
+   module/layer slices with their own completion gates.
+3. Recommends one coherent MD kit instead of isolated prompt snippets.
+4. Installs selected files only after confirmation.
+5. Pulls high-signal Codex and Claude Code MD repositories from GitHub into a
    local raw library.
-5. Distills that raw library into scenario-based MD kit templates and indexes.
-6. Can refresh the library weekly with a macOS LaunchAgent.
+6. Distills that raw library into scenario-based MD kit templates and indexes.
+7. Can refresh the library weekly with a macOS LaunchAgent.
 
 ## Install
 
@@ -77,10 +79,28 @@ The skill should:
 
 1. inspect the repo;
 2. ask a few questions;
-3. recommend a kit with destinations and loading behavior;
-4. wait for confirmation;
-5. install selected files;
-6. explain which files auto-load and which are on-demand.
+3. summarize the intended whole task;
+4. split non-trivial app/code work into modules or layers;
+5. assign each module a fast build cycle and module-level test or proof;
+6. recommend a kit with destinations and loading behavior;
+7. wait for confirmation;
+8. install selected files;
+9. explain which files auto-load and which are on-demand.
+
+## Module / Layer Workflow
+
+For non-trivial development work, the generated project rules should prevent
+"build the whole app at once" execution. The expected cadence is:
+
+1. Understand the whole application or coding goal.
+2. Confirm unclear boundaries with the user.
+3. Split work into modules or layers such as UI, state, API, data model,
+   storage, jobs, integrations, tests, deployment, and docs.
+4. Build one module/layer at a time.
+5. Run that module's test, preview, API check, migration check, or other proof
+   before moving on.
+6. After all modules/layers pass their gates, run final integration across
+   interfaces, data flow, user flows, cross-module tests, docs, and risk.
 
 ## Generated Kit Types
 

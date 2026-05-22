@@ -13,12 +13,14 @@ Use this skill when a project needs a high-quality agent instruction setup:
 
 1. During startup, planning, or "new project" work, it inspects the project and
    asks a short dialogue about development direction, maturity, and priorities.
-2. It recommends a coherent MD kit before writing files.
-3. After user confirmation, it installs the selected kit into the project.
-4. It maintains a local reference library by pulling high-signal Codex and
+2. It turns the user's intended application or code task into a module/layer
+   breakdown with explicit per-module build and test gates.
+3. It recommends a coherent MD kit before writing files.
+4. After user confirmation, it installs the selected kit into the project.
+5. It maintains a local reference library by pulling high-signal Codex and
    Claude Code MD/rule repositories from GitHub.
-5. It distills that raw library into scenario-based MD kit templates and indexes.
-6. It can install a weekly macOS LaunchAgent to refresh and re-distill the
+6. It distills that raw library into scenario-based MD kit templates and indexes.
+7. It can install a weekly macOS LaunchAgent to refresh and re-distill the
    library automatically.
 
 ## Local Library
@@ -89,18 +91,43 @@ Run a smoke test:
      production-critical, or review-only.
    - Priority bias: speed, correctness, architecture, UI quality, security,
      performance, tests, docs, or agent orchestration.
+   - Product or task outcome: what the user expects to be usable when the work
+     is complete.
+   - Natural module/layer boundaries: UI, state, API, data model, storage,
+     background jobs, integrations, tests, deployment, docs, or other local
+     architecture layers.
+   - Integration constraints: cross-module contracts, shared schemas, runtime
+     boundaries, visual proof, data migration, or deployment order.
 
-3. Recommend an MD kit.
+3. Create a module/layer development map.
+   - First state the whole-task understanding in one concise paragraph.
+   - Split the work into small modules or layers that can be built quickly and
+     tested independently.
+   - For each module, name the scope, owner/files if known, dependencies,
+     acceptance test, and evidence to show before moving on.
+   - Do not plan to build the whole app or entire task in one uninterrupted
+     pass unless the task is genuinely tiny.
+   - Prefer short module cycles: design the module contract, implement the
+     module, run module-level tests or visible checks, then mark it ready for
+     integration.
+   - After every planned module/layer is built and tested, add a final
+     integration phase that reconciles interfaces, data flow, UI flow,
+     cross-module tests, docs, and remaining risks.
+
+4. Recommend an MD kit.
    - Start from one curated set and at most two add-ons.
    - List each destination, source, reason, required/optional status, and
      loading behavior.
    - Prefer distilled project-specific files over copied full reference files.
+   - Include module/layer workflow constraints in the recommended `AGENTS.md`
+     or planning skill when the project is a non-trivial application or coding
+     task.
 
-4. Wait for explicit user confirmation.
+5. Wait for explicit user confirmation.
    - Do not create, copy, patch, or move project files before approval.
    - If the user approves a subset, install only that subset.
 
-5. Install into the correct project layer.
+6. Install into the correct project layer.
    - `AGENTS.md`: short project baseline, auto-loaded by Codex.
    - Nested `AGENTS.md`: subtree-specific rules.
    - `.agents/skills/<name>/SKILL.md`: repeatable workflows.
@@ -109,26 +136,58 @@ Run a smoke test:
    - `.codex/config.toml`: runtime behavior such as agents, MCP, profiles, or
      sandbox/model defaults.
 
-6. Explain loading.
+7. Explain loading.
    - `AGENTS.md` loads automatically.
    - Project skills load when mentioned, for example `$ui-review`.
    - `docs/agent-context/*.md` should be read only when its trigger condition
      applies.
    - Runtime config or custom agents may require restarting the Codex window.
 
-7. Verify.
+8. Verify.
    - Run `codex debug prompt-input ''` from the project root when available.
    - Confirm visible `AGENTS.md` and skill metadata.
    - Report intentionally non-auto-loaded files.
+
+## Module / Layer Delivery Rules
+
+- Understand the user's full application or coding goal before selecting files
+  or writing rules.
+- Use a brief interaction to confirm only unclear module boundaries,
+  dependencies, and acceptance criteria.
+- Break non-trivial work into modules or layers that can each be developed in a
+  fast, reviewable cycle.
+- Each module/layer needs its own completion gate: module tests, targeted
+  command output, screenshot/preview, API check, migration dry run, or other
+  evidence suited to the project.
+- Do not let a module be marked complete if its local test or proof is missing.
+- Final integration happens after all planned modules/layers pass their module
+  gates; it must check contracts, shared data, user flows, cross-module tests,
+  docs, and unresolved risk.
+- If a module uncovers a changed requirement, pause the module map and ask the
+  user to confirm the revised split before continuing large implementation.
 
 ## Recommendation Format
 
 ```md
 ## Recommended MD Kit
 
+## Task Understanding
+One concise paragraph summarizing the full application or coding goal.
+
+## Module / Layer Breakdown
+
+| Module / Layer | Scope | Depends On | Completion Gate | Evidence |
+|---|---|---|---|---|
+| UI shell | ... | ... | ... | ... |
+
 | Layer | Destination | Source | Required? | Why |
 |---|---|---|---|---|
 | Project baseline | `AGENTS.md` | `frontend-ui` distilled | Required | ... |
+
+## Development Cadence
+- Build and test one module/layer at a time.
+- Integrate only after all planned module gates pass.
+- Run final cross-module verification before calling the whole task complete.
 
 ## Loading Behavior
 - `AGENTS.md`: auto-loaded for this project.
